@@ -203,9 +203,10 @@ summary {
 }
 
 body {
-    background-color: color-mix(in srgb, Canvas, CanvasText 2.5%);
-    color: color-mix(in srgb, CanvasText, Canvas 15%);
-    color-scheme: light dark;
+    background-color: Canvas;
+    color: CanvasText;
+    color-scheme: light;
+    /* color-scheme: light dark; */
 }
 
 h1,
@@ -270,6 +271,27 @@ h6 {
 /* Start here !!!! */
 /*/*/
 
-.article :where(h1, h2, h3, h4, h5) {
-    all: revert;
+/* 
+.board {
+    display: grid;
+    height: 500px;
+    width: 500px;
+    grid-template-columns: repeat(7, 1fr);
+    grid-template-rows: repeat(6, 1fr);
+
+    border: 1px solid black;
+    gap: 2px;
+    padding: 2px;
+    background-color: yellow;
 }
+
+.cell {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    font-size: 2rem;
+    border: 1px solid grey;
+    background: lightyellow;
+    cursor: pointer;
+} */
