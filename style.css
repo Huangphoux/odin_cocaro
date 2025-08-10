@@ -271,27 +271,33 @@ h6 {
 /* Start here !!!! */
 /*/*/
 
-/* 
+.container {
+    display: grid;
+    grid-template-rows: 100px 1fr;
+    place-items: center;
+}
+
+.turn {
+    font-size: xx-large;
+}
+
 .board {
     display: grid;
     height: 500px;
     width: 500px;
-    grid-template-columns: repeat(7, 1fr);
-    grid-template-rows: repeat(6, 1fr);
+
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    gap: 20px;
 
     border: 1px solid black;
-    gap: 2px;
-    padding: 2px;
-    background-color: yellow;
+    padding: 20px;
+    background-color: green;
 }
 
 .cell {
-    display: flex;
-    justify-content: center;
-    align-items: center;
     text-align: center;
     font-size: 2rem;
-    border: 1px solid grey;
     background: lightyellow;
     cursor: pointer;
-} */
+}
