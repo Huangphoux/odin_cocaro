@@ -1,5 +1,6 @@
 const gameBoard = (function () {
     const board = [];
+    const empty = "";
 
     for (let i = 0; i < 3; i++) {
         board[i] = [];
@@ -15,7 +16,7 @@ const gameBoard = (function () {
     };
 
     const placeToken = (row, column, player) => {
-        if (board[row][column].getValue() === '') {
+        if (board[row][column].getValue() === empty) {
             board[row][column].addToken(player);
             return true;
         } else {
@@ -28,14 +29,14 @@ const gameBoard = (function () {
         let target = arr[0].getValue();
         for (const item of arr) {
             if (item.getValue() !== target) {
-                return 3;
+                return null;
             }
         }
 
-        if (arr[0].getValue() == 'X') {
+        if (arr[0].getValue() == "X") {
             return 1;
         }
-        if (arr[0].getValue() == 'O') {
+        if (arr[0].getValue() == "O") {
             return 2;
         }
     };
@@ -70,7 +71,7 @@ const gameBoard = (function () {
         let noMoreCell = true;
         for (let i = 0; i < 3; i++) {
             for (let j = 0; j < 3; j++) {
-                if (board[i][j].getValue() === '') {
+                if (board[i][j].getValue() === empty) {
                     noMoreCell = false;
                 }
             }
@@ -84,7 +85,7 @@ const gameBoard = (function () {
 })();
 
 function Cell() {
-    let value = '';
+    let value = "";
 
     const addToken = (player) => {
         value = player;
@@ -99,16 +100,15 @@ function createPlayer(name, token) {
     return { name, token };
 }
 
-const gameController = (function (playerOneName = "Player One", playerTwoName = "Player Two") {
-    const players = [createPlayer(playerOneName, 'X'), createPlayer(playerTwoName, 'O')];
+const gameController = (function () {
+    let players = [createPlayer("player1", "X"), createPlayer("player2", "O")];
 
     let activePlayer = players[0];
+    const getActivePlayer = () => activePlayer;
 
     const switchPlayerTurn = () => {
         activePlayer = activePlayer === players[0] ? players[1] : players[0];
     };
-
-    const getActivePlayer = () => activePlayer;
 
     const printNewRound = () => {
         gameBoard.printBoard();
@@ -180,3 +180,23 @@ const screenController = (function () {
 
     updateScreen();
 })();
+
+const dialog = document.querySelector("dialog");
+const form = document.querySelector("form");
+const showBtn = document.querySelector(".start");
+const closeBtn = document.querySelector(".close");
+const submitBtn = document.querySelector(".submit");
+
+showBtn.addEventListener("click", () => {
+    dialog.showModal();
+});
+
+closeBtn.addEventListener("click", () => {
+    dialog.close();
+});
+
+form.addEventListener("submit", (event) => {
+    event.preventDefault();
+
+    dialog.close();
+});

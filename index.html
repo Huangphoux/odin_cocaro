@@ -11,9 +11,26 @@
         <link rel="stylesheet" href="style.css" />
     </head>
     <body>
-        <div class="container">
-            <h1 class="turn"></h1>
-            <div class="board"></div>
-        </div>
+        <p>Cocaro !</p>
+
+        <dialog closedby="any">
+            <button class="close" formmethod="dialog" autofocus>×</button>
+            <p>Player Creation</p>
+
+            <form>
+                <label for="player1">Player 1 Name</label>
+                <input type="text" name="player1" id="player1" required />
+
+                <label for="player2">Player 2 Name</label>
+                <input type="text" name="player2" id="player2" required />
+
+                <button id="submit" class="submit" type="submit">Let's play !</button>
+            </form>
+        </dialog>
+
+        <button class="start">Start !</button>
+
+        <h1 class="turn"></h1>
+        <div class="board"></div>
     </body>
 </html>
