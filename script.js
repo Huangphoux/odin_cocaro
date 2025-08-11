@@ -176,21 +176,22 @@ const screenController = (function () {
     const playerTurnDiv = document.querySelector(".turn");
     const boardDiv = document.querySelector(".board");
     const winnerDiv = document.querySelector(".winner");
-    
+
     const updateScreen = () => {
         const board = gameBoard.getBoard();
         const activePlayer = playerController.getActivePlayer();
 
+        playerTurnDiv.textContent = `${activePlayer.name}'s turn...`;
+
         if ([0, 1, 2].includes(gameController.getResult())) {
             playerTurnDiv.textContent = "";
-            return;
+            startBtn.style.display = "initial";
+            startBtn.style.position = "initial";
         } else {
-            playerTurnDiv.textContent = `${activePlayer.name}'s turn...`;
+            winnerDiv.textContent = "";
         }
 
         boardDiv.textContent = "";
-        winnerDiv.textContent = "";
-
         board.forEach((row, index) => {
             let rowIndex = index;
             row.forEach((cell, index) => {
@@ -226,10 +227,10 @@ const screenController = (function () {
 
     const dialog = document.querySelector("dialog");
     const form = document.querySelector("form");
-    const showBtn = document.querySelector(".start");
+    const startBtn = document.querySelector(".start");
     const closeBtn = document.querySelector(".close");
 
-    showBtn.addEventListener("click", () => {
+    startBtn.addEventListener("click", () => {
         dialog.showModal();
     });
 
@@ -249,6 +250,8 @@ const screenController = (function () {
         gameController.newRound();
 
         updateScreen();
+
+        startBtn.style.display = "none";
 
         dialog.close();
     });

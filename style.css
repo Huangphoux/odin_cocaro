@@ -413,3 +413,8 @@ input:valid {
     display: grid;
     place-items: center;
 }
+
+.start {
+    position: relative;
+    bottom:300px;
+}
