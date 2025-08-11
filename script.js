@@ -126,9 +126,9 @@ const playerController = (function () {
         activePlayer = activePlayer === players[0] ? players[1] : players[0];
     };
 
-    createPlayer("ada", "X");
-    createPlayer("baba", "O");
-    setActivePlayer();
+    // createPlayer("ada", "X");
+    // createPlayer("baba", "O");
+    // setActivePlayer();
 
     return { getPlayer, createPlayer, setActivePlayer, getActivePlayer, switchPlayerTurn };
 })();
@@ -155,36 +155,22 @@ const gameController = (function () {
 
         result = gameBoard.checkFor3();
 
-        return result;
+        if (result === 0) {
+            return "The game is tied.";
+        } else if ([1, 2].includes(result)) {
+            return `${playerController.getPlayer(result).name} is the winner!`;
+        }
     };
+
+    const getResult = () => result;
 
     const newRound = () => {
         result = null;
         gameBoard.clearBoard();
     };
 
-    return { playRound, newRound };
+    return { playRound, newRound, getResult };
 })();
-
-console.log(gameController.playRound(0, 0));
-console.log(gameController.playRound(1, 0));
-console.log(gameController.playRound(0, 1));
-console.log(gameController.playRound(1, 1));
-console.log(gameController.playRound(0, 2));
-console.log(gameController.playRound(2, 2));
-console.log(gameController.playRound(2, 1));
-console.log(gameController.playRound(2, 0));
-
-gameController.newRound();
-
-console.log(gameController.playRound(0, 0));
-console.log(gameController.playRound(1, 0));
-console.log(gameController.playRound(0, 1));
-console.log(gameController.playRound(1, 1));
-console.log(gameController.playRound(0, 2));
-console.log(gameController.playRound(2, 2));
-console.log(gameController.playRound(2, 1));
-console.log(gameController.playRound(2, 0));
 
 const screenController = (function () {
     const playerTurnDiv = document.querySelector(".turn");
@@ -193,13 +179,12 @@ const screenController = (function () {
 
     const board = gameBoard.getBoard();
 
-    const updateScreen = (result) => {
-        const activePlayer = playerController.getActivePlayer();
-
-        if ([0, 1, 2].includes(result)) {
-            playerTurnDiv.textContent = "";
+    const updateScreen = () => {
+        if ([0, 1, 2].includes(gameController.getResult())) {
             return;
         }
+
+        const activePlayer = playerController.getActivePlayer();
 
         boardDiv.textContent = "";
 
@@ -223,18 +208,16 @@ const screenController = (function () {
     };
 
     function clickHandlerBoard(e) {
+        if ([0, 1, 2].includes(gameController.getResult())) {
+            return;
+        }
+
         const selectedRow = e.target.dataset.row;
         const selectedColumn = e.target.dataset.column;
 
-        let result = gameController.playRound(selectedRow, selectedColumn);
+        winnerDiv.textContent = gameController.playRound(selectedRow, selectedColumn);
 
-        if (result === 0) {
-            winnerDiv.textContent = "The game is tied.";
-        } else if ([1, 2].includes(result)) {
-            winnerDiv.textContent = `${playerController.getPlayer(result).name} is the winner!`;
-        }
-
-        updateScreen(result);
+        updateScreen();
     }
     boardDiv.addEventListener("click", clickHandlerBoard);
 
@@ -259,6 +242,8 @@ const screenController = (function () {
         playerController.createPlayer(formObj.player1, "X");
         playerController.createPlayer(formObj.player2, "O");
         playerController.setActivePlayer();
+
+        gameController.newRound();
 
         updateScreen();
 
