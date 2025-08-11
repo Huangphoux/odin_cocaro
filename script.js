@@ -102,7 +102,7 @@ const playerController = (function () {
 
     const createPlayer = (name, token) => {
         players.push({ name, token });
-        setActivePlayer();
+        // setActivePlayer();
     };
 
     const getPlayer = (number) => {
@@ -111,7 +111,7 @@ const playerController = (function () {
 
     const getActivePlayer = () => activePlayer;
     const setActivePlayer = () => {
-        activePlayer = players[Math.floor(Math.random() * 1)];
+        activePlayer = players[Math.floor(Math.random() * 2)];
     };
 
     const switchPlayerTurn = () => {
@@ -152,15 +152,16 @@ const screenController = (function () {
     const board = gameBoard.getBoard();
 
     const updateScreen = (result) => {
-        boardDiv.textContent = "";
-
         const activePlayer = playerController.getActivePlayer();
 
         if ([0, 1, 2].includes(result)) {
             playerTurnDiv.textContent = "";
-        } else {
-            playerTurnDiv.textContent = `${activePlayer.name}'s turn...`;
+            return;
         }
+
+        boardDiv.textContent = "";
+
+        playerTurnDiv.textContent = `${activePlayer.name}'s turn...`;
 
         // Render board squares
         board.forEach((row, index) => {
@@ -180,8 +181,6 @@ const screenController = (function () {
     };
 
     function clickHandlerBoard(e) {
-        const activePlayer = playerController.getActivePlayer();
-
         const selectedRow = e.target.dataset.row;
         const selectedColumn = e.target.dataset.column;
 
@@ -190,7 +189,7 @@ const screenController = (function () {
         if (result === 0) {
             winnerDiv.textContent = "The game is tied.";
         } else if ([1, 2].includes(result)) {
-            winnerDiv.textContent = `${activePlayer.name} is the winner!`;
+            winnerDiv.textContent = `${playerController.getPlayer(result).name} is the winner!`;
         }
 
         updateScreen(result);
@@ -217,6 +216,7 @@ const screenController = (function () {
 
         playerController.createPlayer(formObj.player1, "X");
         playerController.createPlayer(formObj.player2, "O");
+        playerController.setActivePlayer();
 
         updateScreen();
 

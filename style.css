@@ -359,7 +359,8 @@ input:valid {
     border: 1px solid black;
 }
 
-.submit {
+.submit,
+.random {
     display: grid;
     place-self: center;
 
@@ -368,6 +369,11 @@ input:valid {
     width: 50%;
 
     grid-column: 1 / 3;
+}
+
+.random {
+    width: 100%;
+    text-align: center;
 }
 
 .container {
