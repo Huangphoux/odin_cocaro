@@ -176,30 +176,31 @@ const screenController = (function () {
     const playerTurnDiv = document.querySelector(".turn");
     const boardDiv = document.querySelector(".board");
     const winnerDiv = document.querySelector(".winner");
-
-    const board = gameBoard.getBoard();
-
+    
     const updateScreen = () => {
-        if ([0, 1, 2].includes(gameController.getResult())) {
-            return;
-        }
-
+        const board = gameBoard.getBoard();
         const activePlayer = playerController.getActivePlayer();
 
+        if ([0, 1, 2].includes(gameController.getResult())) {
+            playerTurnDiv.textContent = "";
+            return;
+        } else {
+            playerTurnDiv.textContent = `${activePlayer.name}'s turn...`;
+        }
+
         boardDiv.textContent = "";
+        winnerDiv.textContent = "";
 
-        playerTurnDiv.textContent = `${activePlayer.name}'s turn...`;
-
-        // Render board squares
         board.forEach((row, index) => {
             let rowIndex = index;
-
             row.forEach((cell, index) => {
-                const cellButton = document.createElement("button");
+                let columnIndex = index;
+
+                const cellButton = document.createElement("div");
 
                 cellButton.classList.add("cell");
                 cellButton.dataset.row = rowIndex;
-                cellButton.dataset.column = index;
+                cellButton.dataset.column = columnIndex;
                 cellButton.textContent = cell.getValue();
 
                 boardDiv.appendChild(cellButton);
@@ -214,6 +215,8 @@ const screenController = (function () {
 
         const selectedRow = e.target.dataset.row;
         const selectedColumn = e.target.dataset.column;
+
+        if (!selectedRow || !selectedColumn) return;
 
         winnerDiv.textContent = gameController.playRound(selectedRow, selectedColumn);
 

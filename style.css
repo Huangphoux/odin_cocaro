@@ -392,19 +392,24 @@ input:valid {
     display: grid;
     height: 500px;
     width: 500px;
+    gap: 20px;
+    padding: 20px;
 
     grid-template-columns: repeat(3, 1fr);
     grid-template-rows: repeat(3, 1fr);
-    gap: 20px;
 
-    border: 1px solid black;
-    padding: 20px;
-    background-color: green;
+    border: 2px solid black;
 }
 
 .cell {
-    text-align: center;
-    font-size: 2rem;
-    background: lightyellow;
     cursor: pointer;
+
+    border: 2px solid black;
+
+    text-align: center;
+    font-weight: bolder;
+    font-size: 5rem;
+
+    display: grid;
+    place-items: center;
 }
