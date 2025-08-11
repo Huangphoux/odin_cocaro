@@ -1,11 +1,9 @@
 const gameBoard = (function () {
-    const rows = 3;
-    const columns = 3;
     const board = [];
 
-    for (let i = 0; i < rows; i++) {
+    for (let i = 0; i < 3; i++) {
         board[i] = [];
-        for (let j = 0; j < columns; j++) {
+        for (let j = 0; j < 3; j++) {
             board[i].push(Cell());
         }
     }
@@ -13,43 +11,45 @@ const gameBoard = (function () {
     const getBoard = () => board;
 
     const printBoard = () => {
-        const boardWithCellValues = board.map((row) => row.map((cell) => cell.getValue()));
-
-        console.log(boardWithCellValues);
+        console.log(board.map((row) => row.map((cell) => cell.getValue())));
     };
 
     const placeToken = (row, column, player) => {
-        if (board[row][column].getValue() !== 0) return false;
-
-        board[row][column].addToken(player);
-
-        return true;
+        if (board[row][column].getValue() === '') {
+            board[row][column].addToken(player);
+            return true;
+        } else {
+            return false;
+        }
     };
 
-    // check an array of 3 items
+    // check array if all items are the same
     const whoIsTheWinner = (arr) => {
-        if (arr[1].getValue() === arr[0].getValue() && arr[1].getValue() === arr[2].getValue()) {
-            if (arr[1].getValue() == 1) {
-                return 1;
+        let target = arr[0].getValue();
+        for (const item of arr) {
+            if (item.getValue() !== target) {
+                return 3;
             }
-            if (arr[1].getValue() == 2) {
-                return 2;
-            }
+        }
+
+        if (arr[0].getValue() == 'X') {
+            return 1;
+        }
+        if (arr[0].getValue() == 'O') {
+            return 2;
         }
     };
 
     const checkFor3 = () => {
-        for (let i = 0; i < rows; i++) {
+        for (let i = 0; i < 3; i++) {
             // row
             let three_in_a_row = whoIsTheWinner(board[i]);
-
             // column
             let three_in_a_col = whoIsTheWinner([board[0][i], board[1][i], board[2][i]]);
 
             if (three_in_a_row === 1 || three_in_a_row === 2) {
                 return three_in_a_row;
             }
-
             if (three_in_a_col === 1 || three_in_a_col === 2) {
                 return three_in_a_col;
             }
@@ -68,14 +68,13 @@ const gameBoard = (function () {
         }
 
         let noMoreCell = true;
-        for (let i = 0; i < rows; i++) {
-            for (let j = 0; j < columns; j++) {
-                if (board[i][j].getValue() === 0) {
+        for (let i = 0; i < 3; i++) {
+            for (let j = 0; j < 3; j++) {
+                if (board[i][j].getValue() === '') {
                     noMoreCell = false;
                 }
             }
         }
-
         if (noMoreCell) {
             return 0;
         }
@@ -85,7 +84,7 @@ const gameBoard = (function () {
 })();
 
 function Cell() {
-    let value = 0;
+    let value = '';
 
     const addToken = (player) => {
         value = player;
@@ -101,7 +100,7 @@ function createPlayer(name, token) {
 }
 
 const gameController = (function (playerOneName = "Player One", playerTwoName = "Player Two") {
-    const players = [createPlayer(playerOneName, 1), createPlayer(playerTwoName, 2)];
+    const players = [createPlayer(playerOneName, 'X'), createPlayer(playerTwoName, 'O')];
 
     let activePlayer = players[0];
 
@@ -113,7 +112,6 @@ const gameController = (function (playerOneName = "Player One", playerTwoName = 
 
     const printNewRound = () => {
         gameBoard.printBoard();
-        console.log(`${getActivePlayer().name}'s turn.`);
     };
 
     //0: tie
@@ -173,8 +171,6 @@ const screenController = (function () {
     function clickHandlerBoard(e) {
         const selectedRow = e.target.dataset.row;
         const selectedColumn = e.target.dataset.column;
-
-        if (!selectedColumn) return;
 
         gameController.playRound(selectedRow, selectedColumn);
         updateScreen();
