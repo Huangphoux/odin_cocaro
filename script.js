@@ -96,48 +96,52 @@ function Cell() {
     return { addToken, getValue };
 }
 
-function createPlayer(name, token) {
-    return { name, token };
-}
+const playerController = (function () {
+    const players = [];
 
-const gameController = (function () {
-    let players = [createPlayer("player1", "X"), createPlayer("player2", "O")];
+    const getPlayer = (number) => {
+        return players[number - 1];
+    };
+    const createPlayer = (name, token) => {
+        players.push({ name, token });
+    };
 
-    let activePlayer = players[0];
+    let activePlayer;
+
     const getActivePlayer = () => activePlayer;
+    const setActivePlayer = () => {
+        activePlayer = players[Math.floor(Math.random() * 1)];
+    };
 
     const switchPlayerTurn = () => {
         activePlayer = activePlayer === players[0] ? players[1] : players[0];
     };
 
+    createPlayer("ada", "X");
+    createPlayer("baba", "O");
+    setActivePlayer();
+
+    return { getPlayer, createPlayer, setActivePlayer, getActivePlayer, switchPlayerTurn };
+})();
+
+const gameController = (function () {
     const printNewRound = () => {
         gameBoard.printBoard();
     };
 
-    //0: tie
-    //1: 1 wins
-    //2: 2 wins
     const playRound = (row, column) => {
-        if (!gameBoard.placeToken(row, column, getActivePlayer().token)) {
+        if (!gameBoard.placeToken(row, column, playerController.getActivePlayer().token)) {
             return;
         }
 
-        let result = gameBoard.checkFor3();
+        playerController.switchPlayerTurn();
 
-        if ([1, 2].includes(result)) {
-            return `The winner is ${players[result - 1].name} !`;
-        } else if (result === 0) {
-            return "The game is tied.";
-        } else {
-            switchPlayerTurn();
-            return "";
-        }
         printNewRound();
+
+        return gameBoard.checkFor3();
     };
 
-    printNewRound();
-
-    return { playRound, getActivePlayer };
+    return { playRound };
 })();
 
 const screenController = (function () {
@@ -146,6 +150,10 @@ const screenController = (function () {
     const winnerDiv = document.querySelector(".winner");
 
     const updateScreen = () => {
+        if (!players.length) {
+            return;
+        }
+
         boardDiv.textContent = "";
 
         const board = gameBoard.getBoard();
@@ -171,6 +179,10 @@ const screenController = (function () {
     };
 
     function clickHandlerBoard(e) {
+        if (!players.length) {
+            return;
+        }
+
         const selectedRow = e.target.dataset.row;
         const selectedColumn = e.target.dataset.column;
 
@@ -179,27 +191,30 @@ const screenController = (function () {
         updateScreen();
     }
 
+    const dialog = document.querySelector("dialog");
+    const form = document.querySelector("form");
+    const showBtn = document.querySelector(".start");
+    const closeBtn = document.querySelector(".close");
+
+    showBtn.addEventListener("click", () => {
+        dialog.showModal();
+    });
+
+    closeBtn.addEventListener("click", () => {
+        dialog.close();
+    });
+
+    form.addEventListener("submit", (event) => {
+        event.preventDefault();
+
+        let formObj = Object.fromEntries(new FormData(form));
+
+        players = [createPlayer(formObj.player1, "X"), createPlayer(formObj.player2, "O")];
+
+        updateScreen();
+
+        dialog.close();
+    });
+
     boardDiv.addEventListener("click", clickHandlerBoard);
-
-    updateScreen();
 })();
-
-const dialog = document.querySelector("dialog");
-const form = document.querySelector("form");
-const showBtn = document.querySelector(".start");
-const closeBtn = document.querySelector(".close");
-const submitBtn = document.querySelector(".submit");
-
-showBtn.addEventListener("click", () => {
-    dialog.showModal();
-});
-
-closeBtn.addEventListener("click", () => {
-    dialog.close();
-});
-
-form.addEventListener("submit", (event) => {
-    event.preventDefault();
-
-    dialog.close();
-});
