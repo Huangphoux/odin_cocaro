@@ -97,16 +97,17 @@ function Cell() {
 }
 
 const playerController = (function () {
+    let activePlayer;
     const players = [];
+
+    const createPlayer = (name, token) => {
+        players.push({ name, token });
+        setActivePlayer();
+    };
 
     const getPlayer = (number) => {
         return players[number - 1];
     };
-    const createPlayer = (name, token) => {
-        players.push({ name, token });
-    };
-
-    let activePlayer;
 
     const getActivePlayer = () => activePlayer;
     const setActivePlayer = () => {
@@ -117,9 +118,8 @@ const playerController = (function () {
         activePlayer = activePlayer === players[0] ? players[1] : players[0];
     };
 
-    createPlayer("ada", "X");
-    createPlayer("baba", "O");
-    setActivePlayer();
+    // createPlayer("ada", "X");
+    // createPlayer("baba", "O");
 
     return { getPlayer, createPlayer, setActivePlayer, getActivePlayer, switchPlayerTurn };
 })();
@@ -136,7 +136,7 @@ const gameController = (function () {
 
         playerController.switchPlayerTurn();
 
-        printNewRound();
+        // printNewRound();
 
         return gameBoard.checkFor3();
     };
@@ -149,17 +149,18 @@ const screenController = (function () {
     const boardDiv = document.querySelector(".board");
     const winnerDiv = document.querySelector(".winner");
 
-    const updateScreen = () => {
-        if (!players.length) {
-            return;
-        }
+    const board = gameBoard.getBoard();
 
+    const updateScreen = (result) => {
         boardDiv.textContent = "";
 
-        const board = gameBoard.getBoard();
-        const activePlayer = gameController.getActivePlayer();
+        const activePlayer = playerController.getActivePlayer();
 
-        playerTurnDiv.textContent = `${activePlayer.name}'s turn...`;
+        if ([0, 1, 2].includes(result)) {
+            playerTurnDiv.textContent = "";
+        } else {
+            playerTurnDiv.textContent = `${activePlayer.name}'s turn...`;
+        }
 
         // Render board squares
         board.forEach((row, index) => {
@@ -179,17 +180,22 @@ const screenController = (function () {
     };
 
     function clickHandlerBoard(e) {
-        if (!players.length) {
-            return;
-        }
+        const activePlayer = playerController.getActivePlayer();
 
         const selectedRow = e.target.dataset.row;
         const selectedColumn = e.target.dataset.column;
 
-        winnerDiv.textContent = gameController.playRound(selectedRow, selectedColumn);
+        let result = gameController.playRound(selectedRow, selectedColumn);
 
-        updateScreen();
+        if (result === 0) {
+            winnerDiv.textContent = "The game is tied.";
+        } else if ([1, 2].includes(result)) {
+            winnerDiv.textContent = `${activePlayer.name} is the winner!`;
+        }
+
+        updateScreen(result);
     }
+    boardDiv.addEventListener("click", clickHandlerBoard);
 
     const dialog = document.querySelector("dialog");
     const form = document.querySelector("form");
@@ -209,12 +215,11 @@ const screenController = (function () {
 
         let formObj = Object.fromEntries(new FormData(form));
 
-        players = [createPlayer(formObj.player1, "X"), createPlayer(formObj.player2, "O")];
+        playerController.createPlayer(formObj.player1, "X");
+        playerController.createPlayer(formObj.player2, "O");
 
         updateScreen();
 
         dialog.close();
     });
-
-    boardDiv.addEventListener("click", clickHandlerBoard);
 })();
