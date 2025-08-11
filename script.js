@@ -125,11 +125,12 @@ const gameController = (function () {
         let result = gameBoard.checkFor3();
 
         if ([1, 2].includes(result)) {
-            console.log(`The winner is ${players[result - 1].name} !`);
+            return `The winner is ${players[result - 1].name} !`;
         } else if (result === 0) {
-            console.log("The game is tied.");
+            return "The game is tied.";
         } else {
             switchPlayerTurn();
+            return "";
         }
         printNewRound();
     };
@@ -142,6 +143,7 @@ const gameController = (function () {
 const screenController = (function () {
     const playerTurnDiv = document.querySelector(".turn");
     const boardDiv = document.querySelector(".board");
+    const winnerDiv = document.querySelector(".winner");
 
     const updateScreen = () => {
         boardDiv.textContent = "";
@@ -172,7 +174,8 @@ const screenController = (function () {
         const selectedRow = e.target.dataset.row;
         const selectedColumn = e.target.dataset.column;
 
-        gameController.playRound(selectedRow, selectedColumn);
+        winnerDiv.textContent = gameController.playRound(selectedRow, selectedColumn);
+
         updateScreen();
     }
 
