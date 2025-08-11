@@ -1,13 +1,15 @@
 const gameBoard = (function () {
-    const board = [];
+    let board = [];
     const empty = "";
 
-    for (let i = 0; i < 3; i++) {
-        board[i] = [];
-        for (let j = 0; j < 3; j++) {
-            board[i].push(Cell());
+    const generateBoard = () => {
+        for (let i = 0; i < 3; i++) {
+            board[i] = [];
+            for (let j = 0; j < 3; j++) {
+                board[i].push(Cell());
+            }
         }
-    }
+    };
 
     const getBoard = () => board;
 
@@ -81,7 +83,14 @@ const gameBoard = (function () {
         }
     };
 
-    return { getBoard, placeToken, printBoard, checkFor3 };
+    const clearBoard = () => {
+        board = [];
+        generateBoard();
+    };
+
+    clearBoard();
+
+    return { getBoard, placeToken, printBoard, checkFor3, clearBoard };
 })();
 
 function Cell() {
@@ -102,7 +111,6 @@ const playerController = (function () {
 
     const createPlayer = (name, token) => {
         players.push({ name, token });
-        // setActivePlayer();
     };
 
     const getPlayer = (number) => {
@@ -118,31 +126,65 @@ const playerController = (function () {
         activePlayer = activePlayer === players[0] ? players[1] : players[0];
     };
 
-    // createPlayer("ada", "X");
-    // createPlayer("baba", "O");
+    createPlayer("ada", "X");
+    createPlayer("baba", "O");
+    setActivePlayer();
 
     return { getPlayer, createPlayer, setActivePlayer, getActivePlayer, switchPlayerTurn };
 })();
 
 const gameController = (function () {
+    let result = null;
+
     const printNewRound = () => {
         gameBoard.printBoard();
     };
 
     const playRound = (row, column) => {
+        if ([0, 1, 2].includes(result)) {
+            return;
+        }
+
         if (!gameBoard.placeToken(row, column, playerController.getActivePlayer().token)) {
             return;
         }
 
         playerController.switchPlayerTurn();
 
-        // printNewRound();
+        printNewRound();
 
-        return gameBoard.checkFor3();
+        result = gameBoard.checkFor3();
+
+        return result;
     };
 
-    return { playRound };
+    const newRound = () => {
+        result = null;
+        gameBoard.clearBoard();
+    };
+
+    return { playRound, newRound };
 })();
+
+console.log(gameController.playRound(0, 0));
+console.log(gameController.playRound(1, 0));
+console.log(gameController.playRound(0, 1));
+console.log(gameController.playRound(1, 1));
+console.log(gameController.playRound(0, 2));
+console.log(gameController.playRound(2, 2));
+console.log(gameController.playRound(2, 1));
+console.log(gameController.playRound(2, 0));
+
+gameController.newRound();
+
+console.log(gameController.playRound(0, 0));
+console.log(gameController.playRound(1, 0));
+console.log(gameController.playRound(0, 1));
+console.log(gameController.playRound(1, 1));
+console.log(gameController.playRound(0, 2));
+console.log(gameController.playRound(2, 2));
+console.log(gameController.playRound(2, 1));
+console.log(gameController.playRound(2, 0));
 
 const screenController = (function () {
     const playerTurnDiv = document.querySelector(".turn");
