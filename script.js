@@ -107,7 +107,7 @@ function Cell() {
 
 const playerController = (function () {
     let activePlayer;
-    const players = [];
+    let players = [];
 
     const createPlayer = (name, token) => {
         players.push({ name, token });
@@ -126,11 +126,16 @@ const playerController = (function () {
         activePlayer = activePlayer === players[0] ? players[1] : players[0];
     };
 
+    const newRound = () => {
+        activePlayer = null;
+        players = [];
+    };
+
     // createPlayer("ada", "X");
     // createPlayer("baba", "O");
     // setActivePlayer();
 
-    return { getPlayer, createPlayer, setActivePlayer, getActivePlayer, switchPlayerTurn };
+    return { getPlayer, createPlayer, setActivePlayer, getActivePlayer, switchPlayerTurn, newRound };
 })();
 
 const gameController = (function () {
@@ -167,6 +172,8 @@ const gameController = (function () {
     const newRound = () => {
         result = null;
         gameBoard.clearBoard();
+
+        playerController.newRound();
     };
 
     return { playRound, newRound, getResult };
@@ -243,11 +250,11 @@ const screenController = (function () {
 
         let formObj = Object.fromEntries(new FormData(form));
 
+        gameController.newRound();
+
         playerController.createPlayer(formObj.player1, "X");
         playerController.createPlayer(formObj.player2, "O");
         playerController.setActivePlayer();
-
-        gameController.newRound();
 
         updateScreen();
 
