@@ -382,6 +382,8 @@ input:valid {
     place-items: center;
 
     gap: 20px;
+
+    user-select: none;
 }
 
 .turn {
@@ -416,5 +418,5 @@ input:valid {
 
 .start {
     position: relative;
-    bottom:300px;
+    bottom: 300px;
 }
