@@ -205,7 +205,7 @@ summary {
 body {
     background-color: Canvas;
     color: CanvasText;
-    color-scheme: light;
+    color-scheme: light dark;
     /* color-scheme: light dark; */
 }
 
@@ -356,7 +356,7 @@ input:invalid:required {
 }
 
 input:valid {
-    border: 1px solid black;
+    border: 1px solid light-dark(black, white);
 }
 
 .submit,
@@ -400,13 +400,13 @@ input:valid {
     grid-template-columns: repeat(3, 1fr);
     grid-template-rows: repeat(3, 1fr);
 
-    border: 2px solid black;
+    border: 2px solid light-dark(black, white);
 }
 
 .cell {
     cursor: pointer;
 
-    border: 2px solid black;
+    border: 2px solid light-dark(black, white);
 
     text-align: center;
     font-weight: bolder;
